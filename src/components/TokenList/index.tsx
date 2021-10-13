@@ -22,8 +22,8 @@ export function TokenList() {
         <Typography variant="h5" align="center">
           Tokens
         </Typography>
-        <TableContainer style={{ maxHeight: '90vh', overflow: 'scroll' }}>
-          <Table stickyHeader>
+        <TableContainer>
+          <Table size="small">
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
