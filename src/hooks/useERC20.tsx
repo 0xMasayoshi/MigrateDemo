@@ -45,10 +45,20 @@ export const useERC20 = (address) => {
     [chainId, address, library]
   )
 
+  const decimals = useCallback(async () => {
+    if (address) {
+      const erc20 = new Contract(address, ERC20_ABI, library)
+      const decimals = await erc20.decimals()
+
+      return decimals
+    }
+  }, [chainId, address, library])
+
   return {
     balanceOf,
     allowance,
     approve,
+    decimals,
   }
 }
 

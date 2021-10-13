@@ -1,56 +1,67 @@
 import { ChainId, SUSHI_ADDRESS, WETH9_ADDRESS } from '@sushiswap/sdk'
+import { Token } from '../types'
 
-export function tokenList(chainId) {
+export function tokenList(chainId): Token[] | undefined {
   return [
     {
       name: 'SushiToken',
       symbol: 'SUSHI',
       address: SUSHI_ADDRESS[chainId],
+      decimals: 18,
     },
     {
       name: 'Wrapped Ether',
       symbol: 'WETH',
       address: WETH9_ADDRESS[chainId],
+      decimals: 18,
     },
     {
       name: 'USD Coin',
       symbol: 'USDC',
       address: USDC_ADDRESS[chainId],
+      decimals: 6,
     },
     {
       name: 'Dai Stablecoin',
       symbol: 'DAI',
       address: DAI_ADDRESS[chainId],
+      decimals: 18,
     },
     {
       name: 'Wrapped BTC',
       symbol: 'WBTC',
       address: WBTC_ADDRESS[chainId],
+      decimals: 8,
     },
     {
       name: 'Uniswap',
       symbol: 'UNI',
       address: UNI_ADDRESS[chainId],
+      decimals: 18,
     },
     {
       name: 'Tether USD',
       symbol: 'USDT',
       address: USDT_ADDRESS[chainId],
+      decimals: 6,
     },
     {
       name: 'ChainLink Token',
       symbol: 'LINK',
       address: LINK_ADDRESS[chainId],
+      decimals: 18,
     },
     {
       name: 'Graph Token',
       symbol: 'GRT',
       address: GRT_ADDRESS[chainId],
+      decimals: 18,
     },
     {
       name: 'Maker',
       symbol: 'MKR',
       address: MKR_ADDRESS[chainId],
+      decimals: 18,
     },
   ]
 }

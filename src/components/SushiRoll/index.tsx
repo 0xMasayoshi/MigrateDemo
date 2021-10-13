@@ -12,6 +12,7 @@ import { formatUnits } from '@ethersproject/units'
 import { tryParseAmount } from '../../functions/parse'
 import { useTokenAllowance } from '../../hooks/useTokenAllowance'
 import { MaxUint256 } from '@sushiswap/sdk'
+import { useTokenList } from '../../hooks/useTokenList'
 import ClearIcon from '@material-ui/icons/Clear'
 import useSushiRoll from '../../hooks/useSushiRoll'
 import useUniswapFactory from '../../hooks/useUniswapFactory'
@@ -22,6 +23,7 @@ export function SushiRoll() {
 
   const sushiRoll = useSushiRoll()
   const uniswapFactory = useUniswapFactory()
+  const tokenList = useTokenList()
 
   const [tokenA, setTokenA] = useState<string>('')
   const [tokenB, setTokenB] = useState<string>('')
@@ -55,12 +57,8 @@ export function SushiRoll() {
 
     const lpToken = {
       address: pair,
-      tokenA: {
-        address: tokenA,
-      },
-      tokenB: {
-        address: tokenB,
-      },
+      tokenA: tokenList.find((token) => token.address === tokenA),
+      tokenB: tokenList.find((token) => token.address === tokenB),
     }
     const tx = withPermit
       ? await sushiRoll.migrateWithPermit(lpToken, BigNumber.from(parsedAmount))
@@ -162,7 +160,7 @@ export function SushiRoll() {
             }}
           />
           {approved ? (
-            <Button variant="outlined" disabled={migratePending} onClick={async () => await migrate()}>
+            <Button variant="outlined" disabled={migratePending || !parsedAmount} onClick={async () => await migrate()}>
               Migrate
             </Button>
           ) : (
@@ -170,7 +168,11 @@ export function SushiRoll() {
               Approve
             </Button>
           )}
-          <Button variant="outlined" disabled={migratePending} onClick={async () => await migrate(true)}>
+          <Button
+            variant="outlined"
+            disabled={migratePending || !parsedAmount}
+            onClick={async () => await migrate(true)}
+          >
             Migrate W/ Permit
           </Button>
         </Box>

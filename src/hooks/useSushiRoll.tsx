@@ -7,21 +7,25 @@ import { useWeb3React } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 import { LPToken } from '../types'
 import SUSHI_ROLL_ABI from '../abis/SushiRoll.json'
+import useLpToken from './useLpToken'
 
 const useSushiRoll = () => {
   const { chainId, library, account } = useWeb3React<Web3Provider>()
 
+  const { getMinAmounts } = useLpToken()
+
   const migrate = useCallback(
     async (lpToken: LPToken, amount: BigNumber) => {
       if (chainId && library) {
+        const { token0MinAmount, token1MinAmount } = await getMinAmounts(lpToken, amount)
         const sushiRoll = new Contract(SUSHI_ROLL[chainId], SUSHI_ROLL_ABI, library.getSigner())
         const deadline = Math.floor(new Date().getTime() / 1000) + 60 * 10
         const args = [
           lpToken.tokenA.address,
           lpToken.tokenB.address,
           amount,
-          BigNumber.from(0),
-          BigNumber.from(0),
+          token0MinAmount.toString(),
+          token1MinAmount.toString(),
           deadline,
         ]
 
@@ -39,6 +43,7 @@ const useSushiRoll = () => {
   const migrateWithPermit = useCallback(
     async (lpToken: LPToken, amount: BigNumber) => {
       if (account && chainId && library) {
+        const { token0MinAmount, token1MinAmount } = await getMinAmounts(lpToken, amount)
         const sushiRoll = new Contract(SUSHI_ROLL[chainId], SUSHI_ROLL_ABI, library.getSigner())
         const deadline = Math.floor(new Date().getTime() / 1000) + 60 * 10
         const permit = await signERC2612Permit(
@@ -53,8 +58,8 @@ const useSushiRoll = () => {
           lpToken.tokenA.address,
           lpToken.tokenB.address,
           amount,
-          BigNumber.from(0),
-          BigNumber.from(0),
+          token0MinAmount.toString(),
+          token1MinAmount.toString(),
           deadline,
           permit.v,
           permit.r,
