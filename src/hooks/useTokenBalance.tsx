@@ -6,7 +6,7 @@ import { ZERO_ADDRESS } from '../constants/addresses'
 import { BigNumber } from '@ethersproject/bignumber'
 import useERC20 from './useERC20'
 
-export function useTokenBalance(tokenAddress) {
+export function useTokenBalance(address) {
   const { account } = useWeb3React<Web3Provider>()
 
   const [balance, setBalance] = useState<BigNumber>(undefined)
@@ -15,17 +15,17 @@ export function useTokenBalance(tokenAddress) {
     refresh()
   }
 
-  const token = useERC20(tokenAddress)
+  const { balanceOf } = useERC20()
 
   useEffect(() => {
     async function getBalance() {
-      const balance = await token.balanceOf(account)
+      const balance = await balanceOf(address, account)
       setBalance(balance)
     }
 
-    if (!tokenAddress || tokenAddress === ZERO_ADDRESS) return setBalance(undefined)
-    if (account && isAddress(tokenAddress)) getBalance()
-  }, [account, tokenAddress, refreshNeeded])
+    if (!address || address === ZERO_ADDRESS) return setBalance(undefined)
+    if (account && isAddress(address)) getBalance()
+  }, [account, address, refreshNeeded])
 
   return { balance, refreshBalance }
 }

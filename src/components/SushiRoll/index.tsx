@@ -34,7 +34,7 @@ export function SushiRoll() {
   const [approvalPending, setApprovalPending] = useState<boolean>(false)
 
   const pair = useUniswapPair(tokenA, tokenB)
-  const lpToken = useERC20(pair)
+  const { approve: approveToken } = useERC20()
   const { balance, refreshBalance } = useTokenBalance(pair)
   const { allowance, refreshAllowance } = useTokenAllowance(pair, account, SUSHI_ROLL[chainId])
   const approved = balance && allowance && balance.lt(allowance)
@@ -72,7 +72,7 @@ export function SushiRoll() {
   }
 
   async function approve() {
-    const tx = await lpToken.approve(SUSHI_ROLL[chainId], MaxUint256.toString())
+    const tx = await approveToken(pair, SUSHI_ROLL[chainId], MaxUint256.toString())
     setApprovalPending(true)
 
     const receipt = await tx.wait()
@@ -164,7 +164,7 @@ export function SushiRoll() {
               Migrate
             </Button>
           ) : (
-            <Button variant="outlined" disabled={approvalPending} onClick={async () => await approve()}>
+            <Button variant="outlined" disabled={approvalPending || !pair} onClick={async () => await approve()}>
               Approve
             </Button>
           )}
